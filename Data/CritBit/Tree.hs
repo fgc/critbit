@@ -108,7 +108,7 @@ module Data.CritBit.Tree
     -- , fromDistinctAscList
 
     -- * Filter
-    -- , filter
+    , filter
     -- , filterWithKey
     -- , partition
     -- , partitionWithKey
@@ -146,7 +146,7 @@ module Data.CritBit.Tree
 
 import Data.CritBit.Core
 import Data.CritBit.Types.Internal
-import Prelude hiding (foldl, foldr, lookup, null, map)
+import Prelude hiding (foldl, foldr, lookup, null, map, filter)
 import qualified Data.List as List
 
 -- | /O(1)/. Is the map empty?
@@ -433,3 +433,12 @@ union a b = unionL a b
 -- > map show (fromList [("b",5), ("a",3)]) == fromList [("b","5"), ("a","3")]
 map :: (CritBitKey k) => (v -> w) -> CritBit k v -> CritBit k w
 map = fmap
+
+-- | /O(n)/. Filter all values that satisfy the predicate
+--
+-- > filter (<4) (fromList [("b",5), ("a",3)]) == fromList [("a","3")]
+filter:: (CritBitKey k) => (v -> Bool) -> CritBit k v -> CritBit k v
+filter f m = foldrWithKey g empty m
+  where g k v n
+          | f v = insert k v n
+          | otherwise = n

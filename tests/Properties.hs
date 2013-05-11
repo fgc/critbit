@@ -103,9 +103,18 @@ t_keys _ (KV kvs) = C.keys (C.fromList kvs) == Map.keys (Map.fromList kvs)
 
 t_map :: (CritBitKey k, Ord k) => k -> KV k -> Bool
 t_map _ (KV kvs) = mappedC == mappedM
-    where fun     = show . (+3)
-          mappedC = C.toList . C.map fun $ (C.fromList kvs)
-          mappedM = Map.toList . Map.map fun $ (Map.fromList kvs)
+  where 
+    f     = show . (+3)
+    mappedC = C.toList . C.map f $ (C.fromList kvs)
+    mappedM = Map.toList . Map.map f $ (Map.fromList kvs)
+
+t_filter :: (CritBitKey k, Ord k) => k -> KV k -> Bool
+t_filter _ (KV kvs) = filteredC == filteredM
+  where 
+    f = (<3)
+    filteredC = C.toList . C.filter f $ (C.fromList kvs)
+    filteredM = Map.toList . Map.filter f $ (Map.fromList kvs)
+    
 
 propertiesFor :: (Arbitrary k, CritBitKey k, Ord k, Show k) => k -> [Test]
 propertiesFor t = [
@@ -125,6 +134,7 @@ propertiesFor t = [
   , testProperty "t_elems" $ t_elems t
   , testProperty "t_keys" $ t_keys t
   , testProperty "t_map" $ t_map t
+  , testProperty "t_filter" $ t_filter t
   ]
 
 properties :: [Test]
